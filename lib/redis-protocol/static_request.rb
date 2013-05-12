@@ -1,5 +1,5 @@
 class RedisProtocol::StaticRequest
-  attr_reader :raw_data, :type
+  attr_reader :raw_data, :type, :components, :component_count
   OP_DELIMITER = "\r\n"
 
   def initialize(data)
@@ -10,7 +10,7 @@ class RedisProtocol::StaticRequest
   def parse_request
     @type = check_request_type
 
-    send @type, @raw_data
+    send @type
   end
 
   def self.recognize(data)
@@ -29,6 +29,7 @@ class RedisProtocol::StaticRequest
       data, payload = unpack_payload(payload)
       components << data
     end
+    @component_count = components.count
     @components = components
   end
 
@@ -47,8 +48,10 @@ class RedisProtocol::StaticRequest
     next_token payload, field_length
   end
 
-  def inline(data)
-    data.split
+  def inline
+    @components = @raw_data.split
+    @component_count = @components.count
+    @components
   end
 
   def next_token(data, length = 0)
