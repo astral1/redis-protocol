@@ -7,4 +7,4 @@ module RedisProtocol
 end
 
 require 'redis-protocol/request'
-require 'redis-protocol/static_request'
+require 'redis-protocol/unified_protocol'
